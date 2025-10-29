@@ -11,9 +11,33 @@ def get_db():
     return conn
 
 @app.route('/')
-def index():
-    # Por ahora redirigimos a la página de gastos. En el futuro, será el dashboard de alertas.
-    return redirect(url_for('gestion_gastos'))
+def dashboard():
+    conn = get_db()
+    # Buscamos gastos pendientes que venzan en los próximos 30 días o que ya estén vencidos
+    query = """
+        SELECT id, descripcion, monto, fecha_vencimiento, categoria
+        FROM Egresos
+        WHERE estado = 'Pendiente' AND date(fecha_vencimiento) <= date('now', '+30 days')
+        ORDER BY fecha_vencimiento ASC
+    """
+    gastos_pendientes = conn.execute(query).fetchall()
+    conn.close()
+
+    alertas = []
+    from datetime import datetime
+    today = datetime.now().date()
+
+    for gasto in gastos_pendientes:
+        fecha_vencimiento = datetime.strptime(gasto['fecha_vencimiento'], '%Y-%m-%d').date()
+        dias_restantes = (fecha_vencimiento - today).days
+        alertas.append({
+            'descripcion': gasto['descripcion'],
+            'monto': gasto['monto'],
+            'categoria': gasto['categoria'],
+            'dias_restantes': dias_restantes
+        })
+
+    return render_template('dashboard.html', alertas=alertas)
 
 @app.route('/gastos')
 def gestion_gastos():

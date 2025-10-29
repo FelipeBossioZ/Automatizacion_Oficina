@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control - Dashboard</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
+        h1, h2 { color: #333; }
+        a { color: #007BFF; text-decoration: none; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; grid-gap: 2em; }
+        .card { background-color: white; padding: 1.5em; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .alertas-list { list-style-type: none; padding: 0; }
+        .alertas-list li { background-color: #fffbe6; border-left: 5px solid #ffc107; margin-bottom: 1em; padding: 1em; }
+        .alertas-list li.overdue { border-left-color: #dc3545; background-color: #f8d7da; }
+        .alertas-list .days-left { font-weight: bold; }
+        .nav { margin-bottom: 2em; background-color: white; padding: 1em; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Panel de Control Unificado</h1>
+
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}"><strong>Dashboard de Alertas</strong></a> |
+        <a href="{{ url_for('gestion_gastos') }}">Gestión de Gastos</a>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h2>⚠️ Alertas de Pagos Pendientes</h2>
+            {% if alertas %}
+                <ul class="alertas-list">
+                    {% for alerta in alertas %}
+                        <li class="{{ 'overdue' if alerta.dias_restantes < 0 }}">
+                            <strong>{{ alerta.descripcion }}</strong> - Vence en <span class="days-left">{{ alerta.dias_restantes }} días</span>
+                            <br>
+                            Monto: ${{ "{:,.2f}".format(alerta.monto) }} | Categoría: {{ alerta.categoria }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>¡Todo en orden! No hay pagos urgentes pendientes.</p>
+            {% endif %}
+        </div>
+        <div class="card">
+            <h2>🚀 Atajos</h2>
+            <p><a href="{{ url_for('gestion_gastos') }}">Ir a la gestión completa de gastos &rarr;</a></p>
+            <!-- Aquí añadiremos más atajos en el futuro -->
+        </div>
+    </div>
+</body>
+</html>
