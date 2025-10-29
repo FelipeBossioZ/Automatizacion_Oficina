@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control - Gestión de Gastos</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        h1, h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+        th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .form-gasto { background-color: #f9f9f9; padding: 1em; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 2em; }
+        .form-gasto input { margin-bottom: 0.5em; padding: 0.5em; width: 98%; }
+        .btn { background-color: #4CAF50; color: white; padding: 0.7em 1.5em; border: none; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Panel de Control Unificado</h1>
+
+    <div class="form-gasto">
+        <h2>Registrar Nuevo Gasto</h2>
+        <form action="/gasto" method="post">
+            <input type="text" name="descripcion" placeholder="Descripción del Gasto" required><br>
+            <input type="number" name="monto" placeholder="Monto" step="0.01" required><br>
+            <input type="date" name="fecha_vencimiento" required><br>
+            <input type="text" name="categoria" placeholder="Categoría (Nómina, Arriendo, etc.)" required><br>
+            <input type="text" name="etiqueta" placeholder="Etiqueta (OFICINA o GTFF)" required><br>
+            <button type="submit" class="btn">Añadir Gasto</button>
+        </form>
+    </div>
+
+    <h2>Listado de Egresos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Monto</th>
+                <th>Fecha Vencimiento</th>
+                <th>Categoría</th>
+                <th>Etiqueta</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for gasto in gastos %}
+            <tr>
+                <td>{{ gasto.descripcion }}</td>
+                <td>${{ "{:,.2f}".format(gasto.monto) }}</td>
+                <td>{{ gasto.fecha_vencimiento }}</td>
+                <td>{{ gasto.categoria }}</td>
+                <td>{{ gasto.etiqueta }}</td>
+                <td>{{ gasto.estado }}</td>
+                <td>
+                    {% if gasto.estado == 'Pendiente' %}
+                    <form action="/gasto/pagar/{{ gasto.id }}" method="post">
+                        <button type="submit" class="btn">Marcar como Pagado</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

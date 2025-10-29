@@ -40,6 +40,20 @@ def inicializar_bd():
         )
         ''')
 
+        # --- Tabla de Egresos ---
+        # Almacena todos los gastos fijos y variables.
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Egresos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            descripcion TEXT NOT NULL,
+            monto REAL NOT NULL,
+            fecha_vencimiento DATE,
+            categoria TEXT,
+            etiqueta TEXT, -- OFICINA o GTFF
+            estado TEXT DEFAULT 'Pendiente' -- Pendiente, Pagado
+        )
+        ''')
+
         conn.commit()
         print("Base de datos inicializada correctamente.")
 
