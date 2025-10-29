@@ -1,0 +1,92 @@
+{
+  "patrimonio": [
+    {
+      "nombre_en_relacion": "EFECTIVO, BANCOS, CUENTAS DE AHORROS",
+      "hoja_excel": "Movimientos",
+      "secciones": [
+        "BANCOS, Cuentas corrientes",
+        "BANCOS, Cuentas de ahorro"
+      ],
+      "columna_descripcion": "CONCEPTO y/o RAZÓN SOCIAL o APELLIDOS Y NOMBRES",
+      "columna_valor": "SALDO FINAL"
+    },
+    {
+      "nombre_en_relacion": "CUENTAS POR COBRAR",
+      "hoja_excel": "Movimientos",
+      "secciones": [
+        "CUENTAS POR COBRAR"
+      ],
+      "columna_descripcion": "CONCEPTO y/o RAZÓN SOCIAL o APELLIDOS Y NOMBRES",
+      "columna_valor": "SALDO FINAL"
+    },
+    {
+      "nombre_en_relacion": "INVERSIONES MOBILIARIAS, BONOS, CDT's Y DEMÁS INVERSIONES",
+      "hoja_excel": "Movimientos",
+      "secciones": [
+        "FONDOS",
+        "OTRAS INVERSIONES"
+      ],
+      "columna_descripcion": "CONCEPTO y/o RAZÓN SOCIAL o APELLIDOS Y NOMBRES",
+      "columna_valor": "SALDO FINAL"
+    },
+    {
+      "nombre_en_relacion": "ACCIONES Y APORTES EN SOCIEDADES",
+      "hoja_excel": "Acciones y Aportes",
+      "secciones": [
+        "Para: Dividendos y participaciones 2016 y anteriores"
+      ],
+      "columna_descripcion": "RAZÓN SOCIAL DE LA SOCIEDAD",
+      "columna_valor": "COSTO FISCAL Final"
+    },
+    {
+      "nombre_en_relacion": "BIENES RAÍCES Y TERRENOS",
+      "hoja_excel": "Propiedad, Planta y Equipo",
+      "secciones": [
+        "CONSTRUCCIONES Y EDIFICACIONES"
+      ],
+      "columna_descripcion": "DIRECCIÓN",
+      "columna_valor": "VALOR Final"
+    }
+  ],
+  "pasivos": [
+    {
+      "nombre_en_relacion": "FINANCIEROS",
+      "hoja_excel": "Movimientos",
+      "secciones": [
+        "OBLIGACIONES FINANCIERAS"
+      ],
+      "columna_descripcion": "CONCEPTO y/o RAZÓN SOCIAL o APELLIDOS Y NOMBRES",
+      "columna_valor": "SALDO FINAL"
+    },
+    {
+      "nombre_en_relacion": "OTRAS CUENTAS POR PAGAR",
+      "hoja_excel": "Movimientos",
+      "secciones": [
+        "CUENTAS POR PAGAR"
+      ],
+      "columna_descripcion": "CONCEPTO y/o RAZÓN SOCIAL o APELLIDOS Y NOMBRES",
+      "columna_valor": "SALDO FINAL"
+    }
+  ],
+  "ingresos": [
+    {
+      "nombre_en_relacion": "PENSIONES, SALARIOS Y DEMÁS PAGOS LABORALES",
+      "hoja_excel": "Ingresos Laborales y Pensiones",
+      "secciones": [
+        "RENTAS POR SALARIOS",
+        "PENSIONES DE: JUBILACIÓN, INVALIDEZ, VEJEZ, DE SOBREVIVIENTE Y SOBRE RIESGOS LABORALES"
+      ],
+      "columna_descripcion": "RAZÓN SOCIAL O APELLIDOS Y NOMBRES",
+      "columna_valor": "TOTAL INGRESO"
+    },
+    {
+      "nombre_en_relacion": "OTROS INGRESOS Y RETENCIONES",
+      "hoja_excel": "Ingresos Capital y No Laborales",
+      "secciones": [
+        "ARRENDAMIENTOS"
+      ],
+      "columna_descripcion": "RAZÓN SOCIAL O APELLIDOS Y NOMBRES",
+      "columna_valor": "TOTAL INGRESO"
+    }
+  ]
+}
