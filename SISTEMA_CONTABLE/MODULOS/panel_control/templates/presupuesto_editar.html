@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✏️ Editar Presupuesto - Sistema Contable</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .back-link {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .comparison-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .comparison-box.active {
+            display: block;
+        }
+
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .old-value {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .new-value {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .progress-preview {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .progress-ok {
+            background: #4caf50;
+        }
+
+        .progress-warning {
+            background: #ff9800;
+        }
+
+        .progress-danger {
+            background: #e53e3e;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .badge-template {
+            background: #4caf50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Editar Presupuesto</h1>
+            <a href="/presupuestos" class="back-link">← Volver</a>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-title">
+                {{ presupuesto.categoria }} - {{ presupuesto.etiqueta }}
+                {% if presupuesto.template_id %}
+                <span class="badge badge-template">🔄 Template</span>
+                {% endif %}
+            </h2>
+
+            <div class="alert alert-info">
+                <strong>📅 Mes:</strong> {{ presupuesto.mes }}/{{ presupuesto.anio }}<br>
+                <strong>💡 Recuerda:</strong> Solo puedes editar el presupuesto del mes actual. Los cambios no afectan el template original.
+            </div>
+
+            {% if presupuesto.template_id %}
+            <div class="alert alert-warning">
+                <strong>⚠️ Presupuesto creado desde template</strong><br>
+                Este presupuesto fue generado automáticamente. Si deseas cambios permanentes, edita el template desde la pestaña "Templates".
+            </div>
+            {% endif %}
+
+            <div class="info-card">
+                <div class="info-row">
+                    <span class="info-label">Estado Actual:</span>
+                    <span class="info-value">${{ "{:,.0f}".format(presupuesto.monto_gastado) }} de ${{ "{:,.0f}".format(presupuesto.monto_presupuestado) }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Porcentaje Usado:</span>
+                    <span class="info-value">{{ "%.1f"|format((presupuesto.monto_gastado / presupuesto.monto_presupuestado * 100) if presupuesto.monto_presupuestado > 0 else 0) }}%</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Disponible:</span>
+                    <span class="info-value">${{ "{:,.0f}".format(presupuesto.monto_presupuestado - presupuesto.monto_gastado) }}</span>
+                </div>
+            </div>
+
+            <form action="/presupuesto/editar/{{ presupuesto.id }}" method="POST" onsubmit="return validarFormulario()">
+                <div class="form-group">
+                    <label>Categoría:</label>
+                    <input type="text" value="{{ presupuesto.categoria }}" disabled>
+                    <small>La categoría no se puede modificar</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Etiqueta:</label>
+                    <input type="text" value="{{ presupuesto.etiqueta }}" disabled>
+                    <small>La etiqueta no se puede modificar</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="monto">Nuevo Monto Presupuestado: *</label>
+                    <input type="number" name="monto" id="monto" required min="0" step="1000" 
+                           value="{{ presupuesto.monto_presupuestado }}" oninput="actualizarPreview()">
+                    <small>Monto actual: ${{ "{:,.0f}".format(presupuesto.monto_presupuestado) }}</small>
+                    
+                    <div class="comparison-box" id="comparison">
+                        <div class="comparison-item">
+                            <span>Anterior:</span>
+                            <span class="old-value" id="old-value">$0</span>
+                        </div>
+                        <div class="comparison-item">
+                            <span>Nuevo:</span>
+                            <span class="new-value" id="new-value">$0</span>
+                        </div>
+                        <div class="comparison-item">
+                            <span>Diferencia:</span>
+                            <span class="new-value" id="diff-value">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-preview">
+                    <strong>Vista Previa del Presupuesto:</strong>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="preview-bar">0%</div>
+                    </div>
+                    <div style="text-align: center; color: #666;">
+                        <span id="preview-text">$0 de $0 gastado</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/presupuestos'">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const montoOriginal = {{ presupuesto.monto_presupuestado }};
+        const montoGastado = {{ presupuesto.monto_gastado }};
+
+        function formatearMoneda(valor) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(valor);
+        }
+
+        function actualizarPreview() {
+            const nuevoMonto = parseFloat(document.getElementById('monto').value) || 0;
+            const comparison = document.getElementById('comparison');
+            
+            // Mostrar comparación si hay cambio
+            if (nuevoMonto !== montoOriginal) {
+                comparison.classList.add('active');
+                document.getElementById('old-value').textContent = formatearMoneda(montoOriginal);
+                document.getElementById('new-value').textContent = formatearMoneda(nuevoMonto);
+                const diferencia = nuevoMonto - montoOriginal;
+                document.getElementById('diff-value').textContent = 
+                    (diferencia > 0 ? '+' : '') + formatearMoneda(diferencia);
+            } else {
+                comparison.classList.remove('active');
+            }
+
+            // Actualizar barra de progreso
+            const porcentaje = (montoGastado / nuevoMonto * 100);
+            const previewBar = document.getElementById('preview-bar');
+            const previewText = document.getElementById('preview-text');
+            
+            previewBar.style.width = Math.min(porcentaje, 100) + '%';
+            previewBar.textContent = porcentaje.toFixed(1) + '%';
+            previewText.textContent = `${formatearMoneda(montoGastado)} de ${formatearMoneda(nuevoMonto)} gastado`;
+            
+            // Cambiar color según porcentaje
+            previewBar.className = 'progress-fill';
+            if (porcentaje < 70) {
+                previewBar.classList.add('progress-ok');
+            } else if (porcentaje < 90) {
+                previewBar.classList.add('progress-warning');
+            } else {
+                previewBar.classList.add('progress-danger');
+            }
+        }
+
+        function validarFormulario() {
+            const nuevoMonto = parseFloat(document.getElementById('monto').value);
+            
+            if (nuevoMonto <= 0) {
+                alert('El monto debe ser mayor a cero');
+                return false;
+            }
+
+            if (nuevoMonto === montoOriginal) {
+                alert('No has realizado ningún cambio');
+                return false;
+            }
+
+            if (nuevoMonto < montoGastado) {
+                if (!confirm(`⚠️ ADVERTENCIA\n\nEl nuevo presupuesto (${formatearMoneda(nuevoMonto)}) es MENOR que lo ya gastado (${formatearMoneda(montoGastado)}).\n\nEsto significa que estarías ${formatearMoneda(montoGastado - nuevoMonto)} sobre presupuesto.\n\n¿Estás seguro de continuar?`)) {
+                    return false;
+                }
+            }
+
+            const diferencia = nuevoMonto - montoOriginal;
+            const mensaje = diferencia > 0 
+                ? `¿Aumentar el presupuesto en ${formatearMoneda(diferencia)}?` 
+                : `¿Reducir el presupuesto en ${formatearMoneda(Math.abs(diferencia))}?`;
+            
+            return confirm(mensaje + '\n\nEste cambio solo afecta el mes actual.');
+        }
+
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarPreview();
+        });
+    </script>
+</body>
+</html>

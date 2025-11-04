@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Template - Sistema Contable</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .back-link {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .special-months {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .special-months h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .month-input {
+            display: none;
+            margin-top: 10px;
+            padding-left: 30px;
+        }
+
+        .month-input.active {
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .preview-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .preview-box h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .preview-item {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .preview-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .preview-value {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Crear Template de Presupuesto</h1>
+            <a href="/presupuestos" class="back-link">← Volver</a>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-title">Nuevo Template Recurrente</h2>
+
+            <div class="alert alert-info">
+                <strong>💡 ¿Qué es un template?</strong><br>
+                Un template crea automáticamente presupuestos cada mes. Solo configúralo una vez y olvídate.
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ Meses Especiales:</strong><br>
+                Febrero (cesantías), Junio (prima) y Diciembre (liquidaciones) pueden tener montos diferentes.
+            </div>
+
+            <form action="/template/crear" method="POST" onsubmit="return validarFormulario()">
+                <div class="form-group">
+                    <label for="categoria">Categoría: *</label>
+                    <select name="categoria" id="categoria" required>
+                        <option value="">-- Seleccionar --</option>
+                        {% for cat in categorias %}
+                        {% if cat.activa %}
+                        <option value="{{ cat.nombre }}">{{ cat.nombre }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <small>La categoría del gasto que se repetirá cada mes</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="etiqueta">Etiqueta: *</label>
+                    <select name="etiqueta" id="etiqueta" required>
+                        <option value="">-- Seleccionar --</option>
+                        <option value="OFICINA">OFICINA</option>
+                        <option value="GTFF">GTFF</option>
+                    </select>
+                    <small>Identifica a qué área pertenece este presupuesto</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="monto_base">Monto Base (10 meses normales): *</label>
+                    <input type="number" name="monto_base" id="monto_base" required min="0" step="1000" 
+                           oninput="actualizarPreview()">
+                    <small>Este monto se usará para los 10 meses normales del año</small>
+                </div>
+
+                <div class="special-months">
+                    <h3>📅 Meses con Montos Especiales</h3>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="check_febrero" onchange="toggleMesEspecial('febrero')">
+                        <label for="check_febrero">Febrero tiene un monto diferente (cesantías)</label>
+                    </div>
+                    <div class="month-input" id="input_febrero">
+                        <div class="form-group">
+                            <label for="monto_febrero">Monto para Febrero:</label>
+                            <input type="number" name="monto_febrero" id="monto_febrero" min="0" step="1000" 
+                                   oninput="actualizarPreview()">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="check_junio" onchange="toggleMesEspecial('junio')">
+                        <label for="check_junio">Junio tiene un monto diferente (prima)</label>
+                    </div>
+                    <div class="month-input" id="input_junio">
+                        <div class="form-group">
+                            <label for="monto_junio">Monto para Junio:</label>
+                            <input type="number" name="monto_junio" id="monto_junio" min="0" step="1000" 
+                                   oninput="actualizarPreview()">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="check_diciembre" onchange="toggleMesEspecial('diciembre')">
+                        <label for="check_diciembre">Diciembre tiene un monto diferente (liquidaciones)</label>
+                    </div>
+                    <div class="month-input" id="input_diciembre">
+                        <div class="form-group">
+                            <label for="monto_diciembre">Monto para Diciembre:</label>
+                            <input type="number" name="monto_diciembre" id="monto_diciembre" min="0" step="1000" 
+                                   oninput="actualizarPreview()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">Observaciones (opcional):</label>
+                    <textarea name="observaciones" id="observaciones" rows="3" 
+                              placeholder="Notas adicionales sobre este template..."></textarea>
+                </div>
+
+                <div class="preview-box" id="preview" style="display: none;">
+                    <h3>📊 Vista Previa - Presupuesto Anual</h3>
+                    <div id="preview-content"></div>
+                    <div class="preview-item" style="background: #667eea; color: white; font-size: 18px; margin-top: 10px;">
+                        <span class="preview-label">Total Anual:</span>
+                        <span class="preview-value" id="total-anual">$0</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/presupuestos'">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        ✅ Crear Template
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleMesEspecial(mes) {
+            const checkbox = document.getElementById('check_' + mes);
+            const input = document.getElementById('input_' + mes);
+            const montoInput = document.getElementById('monto_' + mes);
+            
+            if (checkbox.checked) {
+                input.classList.add('active');
+                montoInput.required = true;
+            } else {
+                input.classList.remove('active');
+                montoInput.required = false;
+                montoInput.value = '';
+            }
+            
+            actualizarPreview();
+        }
+
+        function actualizarPreview() {
+            const montoBase = parseFloat(document.getElementById('monto_base').value) || 0;
+            const montoFebrero = document.getElementById('check_febrero').checked ? 
+                                (parseFloat(document.getElementById('monto_febrero').value) || 0) : montoBase;
+            const montoJunio = document.getElementById('check_junio').checked ? 
+                              (parseFloat(document.getElementById('monto_junio').value) || 0) : montoBase;
+            const montoDiciembre = document.getElementById('check_diciembre').checked ? 
+                                  (parseFloat(document.getElementById('monto_diciembre').value) || 0) : montoBase;
+
+            if (montoBase === 0) {
+                document.getElementById('preview').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('preview').style.display = 'block';
+
+            const meses = [
+                {nombre: 'Enero', monto: montoBase},
+                {nombre: 'Febrero', monto: montoFebrero, especial: montoFebrero !== montoBase},
+                {nombre: 'Marzo', monto: montoBase},
+                {nombre: 'Abril', monto: montoBase},
+                {nombre: 'Mayo', monto: montoBase},
+                {nombre: 'Junio', monto: montoJunio, especial: montoJunio !== montoBase},
+                {nombre: 'Julio', monto: montoBase},
+                {nombre: 'Agosto', monto: montoBase},
+                {nombre: 'Septiembre', monto: montoBase},
+                {nombre: 'Octubre', monto: montoBase},
+                {nombre: 'Noviembre', monto: montoBase},
+                {nombre: 'Diciembre', monto: montoDiciembre, especial: montoDiciembre !== montoBase}
+            ];
+
+            let html = '';
+            let total = 0;
+
+            meses.forEach(mes => {
+                html += `
+                    <div class="preview-item" style="${mes.especial ? 'background: #fff3e0; border-left: 3px solid #ff9800;' : ''}">
+                        <span class="preview-label">${mes.nombre}${mes.especial ? ' ⭐' : ''}</span>
+                        <span class="preview-value">$${mes.monto.toLocaleString('es-CO')}</span>
+                    </div>
+                `;
+                total += mes.monto;
+            });
+
+            document.getElementById('preview-content').innerHTML = html;
+            document.getElementById('total-anual').textContent = '$' + total.toLocaleString('es-CO');
+        }
+
+        function validarFormulario() {
+            const montoBase = parseFloat(document.getElementById('monto_base').value);
+            
+            if (montoBase <= 0) {
+                alert('El monto base debe ser mayor a cero');
+                return false;
+            }
+
+            // Validar meses especiales si están activados
+            if (document.getElementById('check_febrero').checked) {
+                const montoFebrero = parseFloat(document.getElementById('monto_febrero').value);
+                if (montoFebrero <= 0) {
+                    alert('El monto de Febrero debe ser mayor a cero');
+                    return false;
+                }
+            }
+
+            if (document.getElementById('check_junio').checked) {
+                const montoJunio = parseFloat(document.getElementById('monto_junio').value);
+                if (montoJunio <= 0) {
+                    alert('El monto de Junio debe ser mayor a cero');
+                    return false;
+                }
+            }
+
+            if (document.getElementById('check_diciembre').checked) {
+                const montoDiciembre = parseFloat(document.getElementById('monto_diciembre').value);
+                if (montoDiciembre <= 0) {
+                    alert('El monto de Diciembre debe ser mayor a cero');
+                    return false;
+                }
+            }
+
+            return confirm('¿Crear este template? Se activará automáticamente y empezará a crear presupuestos desde el próximo mes.');
+        }
+
+        // Inicializar preview
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarPreview();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+﻿# Base de datos
+*.db
+
+# Backups
+BACKUPS/
+backup_*.db
+
+# Reportes generados
+*.xlsx
+*.pdf
+
+# Archivos temporales
+*_BACKUP.py
+
+# Python
+__pycache__/
+*.pyc

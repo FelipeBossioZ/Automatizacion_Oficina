@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Template - Sistema Contable</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .back-link {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input:disabled, .form-group select:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .special-months {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .special-months h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .month-group {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .month-group h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .preview-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .preview-box h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .preview-item {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .preview-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .preview-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .change-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .change-indicator.modified {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Editar Template de Presupuesto</h1>
+            <a href="/presupuestos" class="back-link">← Volver</a>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-title">Modificar Template: {{ template.categoria }} - {{ template.etiqueta }}</h2>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ Importante:</strong><br>
+                Los cambios en el template se aplicarán a partir del próximo mes. Los presupuestos ya creados NO se modificarán.
+            </div>
+
+            <div class="info-box">
+                <h3>📋 Información del Template</h3>
+                <p><strong>Fecha de creación:</strong> {{ template.fecha_creacion }}</p>
+                <p><strong>Estado:</strong> {{ 'Activo ✅' if template.activo else 'Pausado ⏸️' }}</p>
+                {% if template.observaciones %}
+                <p><strong>Observaciones:</strong> {{ template.observaciones }}</p>
+                {% endif %}
+            </div>
+
+            <form action="/template/editar/{{ template.id }}" method="POST" onsubmit="return validarFormulario()">
+                <div class="form-group">
+                    <label for="categoria">Categoría:</label>
+                    <input type="text" name="categoria" id="categoria" value="{{ template.categoria }}" disabled>
+                    <small>La categoría no se puede cambiar. Si necesitas otra, crea un template nuevo.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="etiqueta">Etiqueta:</label>
+                    <input type="text" name="etiqueta" id="etiqueta" value="{{ template.etiqueta }}" disabled>
+                    <small>La etiqueta no se puede cambiar.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="monto_base">Monto Base (10 meses normales): *</label>
+                    <input type="number" name="monto_base" id="monto_base" required min="0" step="1000" 
+                           value="{{ template.monto_base }}" oninput="actualizarPreview()">
+                    <small>Este monto se usa para: Enero, Marzo, Abril, Mayo, Julio, Agosto, Septiembre, Octubre, Noviembre</small>
+                </div>
+
+                <div class="special-months">
+                    <h3>📅 Meses con Montos Especiales</h3>
+                    
+                    <div class="month-group">
+                        <h4>Febrero (Cesantías)</h4>
+                        <div class="form-group">
+                            <label for="monto_febrero">Monto para Febrero:</label>
+                            <input type="number" name="monto_febrero" id="monto_febrero" required min="0" step="1000" 
+                                   value="{{ template.monto_febrero }}" oninput="actualizarPreview()">
+                            <small>Valor actual: ${{ "{:,.0f}".format(template.monto_febrero) }}</small>
+                        </div>
+                    </div>
+
+                    <div class="month-group">
+                        <h4>Junio (Prima)</h4>
+                        <div class="form-group">
+                            <label for="monto_junio">Monto para Junio:</label>
+                            <input type="number" name="monto_junio" id="monto_junio" required min="0" step="1000" 
+                                   value="{{ template.monto_junio }}" oninput="actualizarPreview()">
+                            <small>Valor actual: ${{ "{:,.0f}".format(template.monto_junio) }}</small>
+                        </div>
+                    </div>
+
+                    <div class="month-group">
+                        <h4>Diciembre (Liquidaciones)</h4>
+                        <div class="form-group">
+                            <label for="monto_diciembre">Monto para Diciembre:</label>
+                            <input type="number" name="monto_diciembre" id="monto_diciembre" required min="0" step="1000" 
+                                   value="{{ template.monto_diciembre }}" oninput="actualizarPreview()">
+                            <small>Valor actual: ${{ "{:,.0f}".format(template.monto_diciembre) }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">Observaciones (opcional):</label>
+                    <textarea name="observaciones" id="observaciones" rows="3" 
+                              placeholder="Notas adicionales sobre este template...">{{ template.observaciones or '' }}</textarea>
+                </div>
+
+                <div class="preview-box" id="preview">
+                    <h3>📊 Vista Previa - Presupuesto Anual</h3>
+                    <div id="preview-content"></div>
+                    <div class="preview-item" style="background: #667eea; color: white; font-size: 18px; margin-top: 10px;">
+                        <span class="preview-label">Total Anual:</span>
+                        <span class="preview-value" id="total-anual">$0</span>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/presupuestos'">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Valores originales para comparación
+        const valoresOriginales = {
+            monto_base: {{ template.monto_base }},
+            monto_febrero: {{ template.monto_febrero }},
+            monto_junio: {{ template.monto_junio }},
+            monto_diciembre: {{ template.monto_diciembre }}
+        };
+
+        function actualizarPreview() {
+            const montoBase = parseFloat(document.getElementById('monto_base').value) || 0;
+            const montoFebrero = parseFloat(document.getElementById('monto_febrero').value) || 0;
+            const montoJunio = parseFloat(document.getElementById('monto_junio').value) || 0;
+            const montoDiciembre = parseFloat(document.getElementById('monto_diciembre').value) || 0;
+
+            const meses = [
+                {nombre: 'Enero', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Febrero', monto: montoFebrero, original: valoresOriginales.monto_febrero, especial: true},
+                {nombre: 'Marzo', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Abril', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Mayo', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Junio', monto: montoJunio, original: valoresOriginales.monto_junio, especial: true},
+                {nombre: 'Julio', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Agosto', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Septiembre', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Octubre', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Noviembre', monto: montoBase, original: valoresOriginales.monto_base},
+                {nombre: 'Diciembre', monto: montoDiciembre, original: valoresOriginales.monto_diciembre, especial: true}
+            ];
+
+            let html = '';
+            let total = 0;
+            let haycambios = false;
+
+            meses.forEach(mes => {
+                const cambio = mes.monto !== mes.original;
+                if (cambio) hayChangios = true;
+
+                html += `
+                    <div class="preview-item" style="${mes.especial ? 'background: #fff3e0;' : ''}">
+                        <span class="preview-label">
+                            ${mes.nombre}${mes.especial ? ' ⭐' : ''}
+                            ${cambio ? '<span class="change-indicator modified">Modificado</span>' : ''}
+                        </span>
+                        <span class="preview-value">
+                            $${mes.monto.toLocaleString('es-CO')}
+                            ${cambio ? ` <small style="color: #999;">(era $${mes.original.toLocaleString('es-CO')})</small>` : ''}
+                        </span>
+                    </div>
+                `;
+                total += mes.monto;
+            });
+
+            document.getElementById('preview-content').innerHTML = html;
+            document.getElementById('total-anual').textContent = '$' + total.toLocaleString('es-CO');
+        }
+
+        function validarFormulario() {
+            const montoBase = parseFloat(document.getElementById('monto_base').value);
+            const montoFebrero = parseFloat(document.getElementById('monto_febrero').value);
+            const montoJunio = parseFloat(document.getElementById('monto_junio').value);
+            const montoDiciembre = parseFloat(document.getElementById('monto_diciembre').value);
+            
+            if (montoBase <= 0 || montoFebrero <= 0 || montoJunio <= 0 || montoDiciembre <= 0) {
+                alert('Todos los montos deben ser mayores a cero');
+                return false;
+            }
+
+            // Verificar si hubo cambios
+            const hubo_cambios = 
+                montoBase !== valoresOriginales.monto_base ||
+                montoFebrero !== valoresOriginales.monto_febrero ||
+                montoJunio !== valoresOriginales.monto_junio ||
+                montoDiciembre !== valoresOriginales.monto_diciembre;
+
+            if (!hubo_cambios) {
+                alert('No has realizado ningún cambio');
+                return false;
+            }
+
+            return confirm('¿Guardar los cambios?\n\nLos presupuestos del mes actual NO se modificarán.\nLos cambios se aplicarán desde el próximo mes.');
+        }
+
+        // Inicializar preview al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarPreview();
+        });
+    </script>
+</body>
+</html>
