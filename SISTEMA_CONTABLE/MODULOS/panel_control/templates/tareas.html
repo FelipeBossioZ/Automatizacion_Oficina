@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas y Recordatorios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .nav {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .nav a:hover { background: #667eea; color: white; }
+        
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .filtros {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .filtros select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .tareas-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .tarea-item {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #cbd5e0;
+            transition: all 0.3s;
+        }
+        
+        .tarea-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .tarea-item.alta {
+            border-left-color: #e53e3e;
+            background: #fff5f5;
+        }
+        
+        .tarea-item.media {
+            border-left-color: #ed8936;
+            background: #fffaf0;
+        }
+        
+        .tarea-item.baja {
+            border-left-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .tarea-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        
+        .tarea-descripcion {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            flex: 1;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+        
+        .badge-alta { background: #fed7d7; color: #742a2a; }
+        .badge-media { background: #feebc8; color: #7c2d12; }
+        .badge-baja { background: #c6f6d5; color: #22543d; }
+        
+        .badge-declaracion { background: #dbeafe; color: #1e40af; }
+        .badge-cliente { background: #e0e7ff; color: #3730a3; }
+        .badge-interno { background: #e9d5ff; color: #5b21b6; }
+        .badge-favor { background: #fce7f3; color: #9f1239; }
+        
+        .tarea-detalles {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #718096;
+        }
+        
+        .tarea-fecha {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-completar {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-completar:hover {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+        
+        .tarea-completada {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Gestión de Tareas y Recordatorios</h1>
+            <p style="color: #718096; margin-top: 5px;">Sistema anti-olvidos</p>
+        </div>
+        
+        <div class="nav">
+            <a href="/">🏠 Dashboard</a>
+            <a href="/gastos">💰 Gestión de Gastos</a>
+            <a href="/presupuestos">📊 Presupuestos</a>
+            <a href="/tareas" style="background: #667eea; color: white;">📋 Tareas</a>
+        </div>
+        
+        <!-- FORMULARIO PARA CREAR TAREA -->
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">➕ Crear Nueva Tarea</h2>
+            <form action="/tarea/crear" method="POST">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Descripción de la Tarea *</label>
+                        <textarea name="descripcion" rows="3" placeholder="Ej: Presentar declaración de Familia González antes del 15" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fecha de Vencimiento *</label>
+                        <input type="date" name="fecha_vencimiento" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Prioridad *</label>
+                        <select name="prioridad" required>
+                            <option value="Alta">🔴 Alta</option>
+                            <option value="Media" selected>🟠 Media</option>
+                            <option value="Baja">🟢 Baja</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Categoría *</label>
+                        <select name="categoria" required>
+                            <option value="Declaración">Declaración</option>
+                            <option value="Cliente">Cliente</option>
+                            <option value="Interno">Interno</option>
+                            <option value="Favor">Favor</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Cliente Relacionado (opcional)</label>
+                        <input type="text" name="cliente_relacionado" placeholder="Nombre del cliente">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">✅ Crear Tarea</button>
+            </form>
+        </div>
+        
+        <!-- FILTROS -->
+        <div class="filtros">
+            <form method="GET" action="/tareas" style="display: flex; align-items: center; gap: 15px;">
+                <label style="font-weight: 600; color: #2d3748;">Filtrar por estado:</label>
+                <select name="estado" onchange="this.form.submit()">
+                    <option value="Pendiente" {% if filtro_estado == 'Pendiente' %}selected{% endif %}>Pendientes</option>
+                    <option value="Completada" {% if filtro_estado == 'Completada' %}selected{% endif %}>Completadas</option>
+                    <option value="TODAS" {% if filtro_estado == 'TODAS' %}selected{% endif %}>Todas</option>
+                </select>
+            </form>
+        </div>
+        
+        <!-- LISTA DE TAREAS -->
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">
+                📝 Tareas {{ 'Pendientes' if filtro_estado == 'Pendiente' else ('Completadas' if filtro_estado == 'Completada' else '') }}
+            </h2>
+            
+            {% if tareas %}
+            <div class="tareas-list">
+                {% for tarea in tareas %}
+                {% set prioridad_lower = tarea.prioridad|lower %}
+                <div class="tarea-item {{ prioridad_lower }} {% if tarea.estado == 'Completada' %}tarea-completada{% endif %}">
+                    <div class="tarea-header">
+                        <div class="tarea-descripcion">
+                            {{ tarea.descripcion }}
+                        </div>
+                        <div>
+                            <span class="badge badge-{{ prioridad_lower }}">{{ tarea.prioridad }}</span>
+                            <span class="badge badge-{{ tarea.categoria|lower }}">{{ tarea.categoria }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tarea-detalles">
+                        <div class="tarea-fecha">
+                            <span>📅</span>
+                            <strong>Vence:</strong>
+                            {{ tarea.fecha_vencimiento }}
+                            
+                            {% if tarea.estado == 'Pendiente' %}
+                                {% set fecha_venc = tarea.fecha_vencimiento %}
+                                {% set dias = ((fecha_venc|replace('-', '')|int - '20250000'|int) / 10000)|int %}
+                                {% if dias < 0 %}
+                                    <span style="color: #e53e3e; font-weight: bold; margin-left: 10px;">
+                                        ⚠️ VENCIDA
+                                    </span>
+                                {% elif dias == 0 %}
+                                    <span style="color: #ed8936; font-weight: bold; margin-left: 10px;">
+                                        ⏰ HOY
+                                    </span>
+                                {% elif dias <= 3 %}
+                                    <span style="color: #d69e2e; font-weight: bold; margin-left: 10px;">
+                                        ⏳ {{ dias }} día(s)
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        
+                        {% if tarea.cliente_relacionado %}
+                        <div>
+                            <span>👤</span>
+                            <strong>Cliente:</strong> {{ tarea.cliente_relacionado }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if tarea.estado == 'Completada' %}
+                        <div>
+                            <span>✅</span>
+                            <strong>Completada el:</strong> {{ tarea.fecha_completado }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if tarea.estado == 'Pendiente' %}
+                    <form method="POST" action="/tarea/completar/{{ tarea.id }}" style="display: inline;">
+                        <button type="submit" class="btn-completar">✅ Marcar como Completada</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="text-align: center; padding: 40px; color: #a0aec0; font-style: italic;">
+                {% if filtro_estado == 'Pendiente' %}
+                ¡Excelente! No tienes tareas pendientes en este momento. 🎉
+                {% elif filtro_estado == 'Completada' %}
+                No hay tareas completadas aún.
+                {% else %}
+                No hay tareas registradas. ¡Crea una arriba para empezar!
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

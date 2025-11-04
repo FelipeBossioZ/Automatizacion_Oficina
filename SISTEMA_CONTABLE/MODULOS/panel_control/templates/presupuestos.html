@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Presupuestos - Sistema Contable</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 { color: #2d3748; }
+        
+        .nav {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .nav a:hover, .nav a.active { background: #667eea; color: white; }
+        
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .presupuesto-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .presupuesto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .presupuesto-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-template { background: #d4edda; color: #155724; }
+        .badge-activo { background: #d4edda; color: #155724; }
+        .badge-pausado { background: #f8d7da; color: #721c24; }
+        
+        .progreso {
+            width: 100%;
+            height: 25px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progreso-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            transition: width 0.3s;
+        }
+        
+        .progreso-ok { background: #48bb78; }
+        .progreso-warning { background: #ed8936; }
+        .progreso-danger { background: #f56565; }
+        
+        .acciones {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover { transform: translateY(-2px); }
+        
+        .btn-danger { background: #f56565; color: white; }
+        .btn-danger:hover { background: #e53e3e; }
+        
+        .mensaje-vacio {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .tabs {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s;
+        }
+        
+        .tab-button:hover { background: #f7fafc; }
+        .tab-button.active { color: #667eea; border-bottom: 3px solid #667eea; }
+        
+        .tab-content { display: none; padding: 20px; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Gestión de Presupuestos</h1>
+        </div>
+        
+        <div class="nav">
+            <a href="/">🏠 Dashboard</a>
+            <a href="/gastos">💰 Gestión de Gastos</a>
+            <a href="/presupuestos" class="active">📊 Presupuestos</a>
+            <a href="/tareas">📋 Tareas</a>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="cambiarTab('mes')">📅 Mes Actual</button>
+                <button class="tab-button" onclick="cambiarTab('templates')">🔄 Templates</button>
+                <button class="tab-button" onclick="cambiarTab('categorias')">📝 Categorías</button>
+            </div>
+            
+            <!-- TAB: MES ACTUAL -->
+            <div id="tab-mes" class="tab-content active">
+                <h2 style="margin-bottom: 20px;">Presupuestos de {{ mes_actual }}/{{ anio_actual }}</h2>
+                
+                {% if presupuestos %}
+                    {% for p in presupuestos %}
+                    <div class="presupuesto-card">
+                        <div class="presupuesto-header">
+                            <div class="presupuesto-title">
+                                {{ p.categoria }} - {{ p.etiqueta }}
+                                {% if p.template_id %}
+                                <span class="badge badge-template">🔄 Template</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 28px; font-weight: bold; color: #667eea; margin: 10px 0;">
+                            ${{ "{:,.0f}".format(p.monto_gastado) }}
+                        </div>
+                        <div style="color: #718096; margin-bottom: 10px;">
+                            de ${{ "{:,.0f}".format(p.monto_presupuestado) }} presupuestado
+                        </div>
+                        
+                        {% set porcentaje = (p.monto_gastado / p.monto_presupuestado * 100) if p.monto_presupuestado > 0 else 0 %}
+                        <div class="progreso">
+                            <div class="progreso-fill {% if porcentaje < 70 %}progreso-ok{% elif porcentaje < 90 %}progreso-warning{% else %}progreso-danger{% endif %}" 
+                                 style="width: {{ porcentaje if porcentaje <= 100 else 100 }}%">
+                                {{ "%.1f"|format(porcentaje) }}%
+                            </div>
+                        </div>
+                        
+                        <div class="acciones">
+                            <a href="/presupuesto/editar/{{ p.id }}" class="btn btn-primary">✏️ Editar</a>
+                            <button type="button" class="btn btn-danger" 
+                                onclick="mostrarModalEliminar({{ p.id }}, '{{ p.categoria }}', {{ p.monto_gastado }})">
+                            🗑️ Eliminar
+                        </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="mensaje-vacio">
+                    <h3>No hay presupuestos para este mes</h3>
+                    <p>Crea uno nuevo desde el formulario</p>
+                </div>
+                {% endif %}
+                
+                <!-- FORMULARIO CREAR PRESUPUESTO -->
+                <div class="form-container">
+                    <h3 style="margin-bottom: 20px;">➕ Crear Nuevo Presupuesto</h3>
+                    <form action="/presupuesto/crear" method="POST">
+                        <input type="hidden" name="mes" value="{{ mes_actual }}">
+                        <input type="hidden" name="anio" value="{{ anio_actual }}">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Categoría *</label>
+                                <select name="categoria" required>
+                                    <option value="">Seleccionar...</option>
+                                    {% for cat in categorias %}
+                                    <option value="{{ cat.nombre }}">{{ cat.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Etiqueta *</label>
+                                <select name="etiqueta" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="OFICINA">OFICINA</option>
+                                    <option value="GTFF">GTFF</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Monto Presupuestado *</label>
+                                <input type="number" name="monto" required min="0" step="1000">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                            ✅ Crear Presupuesto
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- TAB: TEMPLATES -->
+            <div id="tab-templates" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Templates Recurrentes</h2>
+                
+                <p style="padding: 15px; background: #fff3cd; border-radius: 8px; margin-bottom: 20px; color: #856404;">
+                    💡 Los templates activos crean presupuestos automáticamente cada mes el día 1
+                </p>
+                
+                {% if templates %}
+                    {% for t in templates %}
+                    <div class="presupuesto-card">
+                        <div class="presupuesto-header">
+                            <div class="presupuesto-title">
+                                {{ t.categoria }} - {{ t.etiqueta }}
+                            </div>
+                            <span class="badge {% if t.activo %}badge-activo{% else %}badge-pausado{% endif %}">
+                                {% if t.activo %}✅ Activo{% else %}⏸️ Pausado{% endif %}
+                            </span>
+                        </div>
+                        
+                        <div style="margin: 10px 0;">
+                            <strong>Monto Base:</strong> ${{ "{:,.0f}".format(t.monto_base) }}
+                        </div>
+                        
+                        {% if t.monto_febrero and t.monto_febrero != t.monto_base %}
+                        <div style="color: #718096; font-size: 14px;">
+                            📅 Febrero: ${{ "{:,.0f}".format(t.monto_febrero) }}
+                        </div>
+                        {% endif %}
+                        {% if t.monto_junio and t.monto_junio != t.monto_base %}
+                        <div style="color: #718096; font-size: 14px;">
+                            📅 Junio: ${{ "{:,.0f}".format(t.monto_junio) }}
+                        </div>
+                        {% endif %}
+                        {% if t.monto_diciembre and t.monto_diciembre != t.monto_base %}
+                        <div style="color: #718096; font-size: 14px;">
+                            📅 Diciembre: ${{ "{:,.0f}".format(t.monto_diciembre) }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="acciones">
+                            <a href="/template/editar/{{ t.id }}" class="btn btn-primary">✏️ Editar</a>
+                            <form method="POST" action="/template/pausar/{{ t.id }}" style="display: inline;">
+                                <button type="submit" class="btn btn-primary">
+                                    {% if t.activo %}⏸️ Pausar{% else %}▶️ Activar{% endif %}
+                                </button>
+                            </form>
+                            <form method="POST" action="/template/eliminar/{{ t.id }}" style="display: inline;" 
+                                  onsubmit="return confirm('¿Eliminar este template?')">
+                                <button type="submit" class="btn btn-danger">🗑️ Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="mensaje-vacio">
+                    <h3>No hay templates configurados</h3>
+                    <p>Crea tu primer template para automatizar presupuestos mensuales</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- FORMULARIO CREAR TEMPLATE -->
+                <div class="form-container">
+                    <h3 style="margin-bottom: 20px;">➕ Crear Nuevo Template</h3>
+                    <form action="/template/crear" method="POST">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Categoría *</label>
+                                <select name="categoria" required>
+                                    <option value="">Seleccionar...</option>
+                                    {% for cat in categorias %}
+                                    <option value="{{ cat.nombre }}">{{ cat.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Etiqueta *</label>
+                                <select name="etiqueta" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="OFICINA">OFICINA</option>
+                                    <option value="GTFF">GTFF</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Monto Base (10 meses) *</label>
+                            <input type="number" name="monto_base" required min="0" step="1000" 
+                                   placeholder="Monto para meses normales">
+                            <small>Este monto se usará para 10 meses del año (excepto Feb, Jun, Dic si los configuras)</small>
+                        </div>
+                        <div style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <strong style="color: #667eea;">📅 Meses Especiales (Opcional)</strong>
+                            <p style="font-size: 13px; color: #666; margin-top: 5px;">Dejar vacío si usan el monto base</p>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Febrero (Cesantías)</label>
+                                <input type="number" name="monto_febrero" min="0" step="1000" 
+                                       placeholder="Opcional">
+                            </div>
+                            <div class="form-group">
+                                <label>Junio (Prima)</label>
+                                <input type="number" name="monto_junio" min="0" step="1000" 
+                                       placeholder="Opcional">
+                            </div>
+                            <div class="form-group">
+                                <label>Diciembre (Liquidaciones)</label>
+                                <input type="number" name="monto_diciembre" min="0" step="1000" 
+                                       placeholder="Opcional">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Observaciones (Opcional)</label>
+                            <input type="text" name="observaciones" 
+                                   placeholder="Ej: Incluye bonos de fin de año">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                            ✅ Crear Template
+                        </button>
+                    </form>
+                </div>
+            
+            <!-- TAB: CATEGORÍAS -->
+            <div id="tab-categorias" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Categorías del Sistema</h2>
+                
+                {% if categorias %}
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f7fafc;">
+                        <tr>
+                            <th style="padding: 15px; text-align: left;">Categoría</th>
+                            <th style="padding: 15px; text-align: center;">Estado</th>
+                            <th style="padding: 15px; text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cat in todas_categorias %}
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 15px;">{{ cat.nombre }}</td>
+                            <td style="padding: 15px; text-align: center;">
+                                <span class="badge {% if cat.activa %}badge-activo{% else %}badge-pausado{% endif %}">
+                                    {% if cat.activa %}✅ Activa{% else %}❌ Inactiva{% endif %}
+                                </span>
+                            </td>
+                            <td style="padding: 15px; text-align: right;">
+                                <form method="POST" action="/categoria/desactivar/{{ cat['id'] }}" style="display: inline;" 
+                                    onsubmit="return confirm('¿Deseas {% if cat.activa %}desactivar{% else %}activar{% endif %} esta categoría?')">
+                                    <button type="submit" class="btn btn-primary">
+                                        {% if cat.activa %}❌ Desactivar{% else %}✅ Activar{% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+                
+                <!-- FORMULARIO CREAR CATEGORÍA -->
+                <div class="form-container" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 20px;">➕ Crear Nueva Categoría</h3>
+                    <form action="/categoria/crear" method="POST">
+                        <div class="form-group">
+                            <label>Nombre de la Categoría *</label>
+                            <input type="text" name="nombre" required placeholder="Ej: Mantenimiento">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                            ✅ Crear Categoría
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function cambiarTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('tab-' + tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+    <!-- Modal para eliminar con PIN -->
+        <div id="modal-eliminar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+                <h3 style="margin-bottom: 20px;">⚠️ Confirmar Eliminación</h3>
+                <p id="mensaje-eliminar" style="margin-bottom: 20px;"></p>
+                <div id="pin-container" style="display: none; margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Ingresa el PIN (0000):</label>
+                    <input type="password" id="pin-input" maxlength="4" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-danger" style="flex: 1;" onclick="confirmarEliminacion()">Eliminar</button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="cerrarModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        let presupuestoEliminar = null;
+
+        function mostrarModalEliminar(id, categoria, montoGastado) {
+            presupuestoEliminar = id;
+            const modal = document.getElementById('modal-eliminar');
+            const mensaje = document.getElementById('mensaje-eliminar');
+            const pinContainer = document.getElementById('pin-container');
+            
+            if (montoGastado > 0) {
+                mensaje.textContent = `El presupuesto "${categoria}" tiene $${montoGastado.toLocaleString('es-CO')} gastados. Para eliminarlo, ingresa el PIN.`;
+                pinContainer.style.display = 'block';
+            } else {
+                mensaje.textContent = `¿Eliminar el presupuesto de "${categoria}"?`;
+                pinContainer.style.display = 'none';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-eliminar').style.display = 'none';
+            document.getElementById('pin-input').value = '';
+            presupuestoEliminar = null;
+        }
+
+        function confirmarEliminacion() {
+            const pinContainer = document.getElementById('pin-container');
+            const pin = document.getElementById('pin-input').value;
+            
+            if (pinContainer.style.display === 'block' && pin !== '0000') {
+                alert('❌ PIN incorrecto');
+                return;
+            }
+            
+            // Crear formulario para enviar
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/presupuesto/eliminar/${presupuestoEliminar}`;
+            
+            const inputPin = document.createElement('input');
+            inputPin.type = 'hidden';
+            inputPin.name = 'pin';
+            inputPin.value = pin;
+            form.appendChild(inputPin);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+        </script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+📋 PARTE 1: CONFIGURACIÓN EN LA OFICINA
+PASO 1: Elegir el PC Servidor
+Elige el PC que:
+
+✅ Se enciende más frecuentemente
+✅ Tiene mejor estabilidad
+✅ Preferiblemente siempre encendido
+
+
+PASO 2: Configurar el PC Servidor
+2.1 En el PC servidor, abre app.py
+2.2 BUSCA la última línea:
+pythonapp.run(host='0.0.0.0', port=8000, debug=True)
+2.3 Cámbiala por:
+pythonapp.run(host='0.0.0.0', port=8000, debug=False)
+Nota: Cambiar debug=True por debug=False (para producción)
+2.4 Guarda el archivo
+
+PASO 3: Obtener la IP del Servidor
+3.1 En el PC servidor, abre CMD (Win + R → cmd)
+3.2 Escribe:
+bashipconfig
+```
+
+**3.3** Busca la línea que dice:
+```
+Dirección IPv4: 192.168.X.X
+```
+
+**3.4** Anota esa IP (ejemplo: `192.168.1.105`)
+
+---
+
+### **PASO 4: Configurar el Firewall**
+
+**En el PC Servidor:**
+
+**4.1** Presiona Win, busca "Firewall de Windows Defender"
+
+**4.2** Click en "Configuración avanzada"
+
+**4.3** Click en "Reglas de entrada" → "Nueva regla"
+
+**4.4** Configura:
+```
+Tipo: Puerto
+Protocolo: TCP
+Puerto: 8000
+Acción: Permitir la conexión
+Perfil: Dominio, Privado
+Nombre: Sistema Contable Flask
+4.5 Finalizar
+
+PASO 5: Iniciar el Sistema en el Servidor
+5.1 En el PC servidor, abre CMD en la carpeta del proyecto
+5.2 Ejecuta:
+bashpython SISTEMA_CONTABLE/MODULOS/panel_control/app.py
+```
+
+**5.3** Debe aparecer:
+```
+* Running on http://0.0.0.0:8000
+```
+
+**5.4** Deja esta ventana abierta (minimízala si quieres)
+
+---
+
+### **PASO 6: Acceder desde los Otros PCs**
+
+**En los otros 2 PCs:**
+
+**6.1** Abre un navegador (Chrome, Edge, etc.)
+
+**6.2** En la barra de direcciones, escribe:
+```
+http://192.168.1.105:8000
+```
+(Usa la IP que anotaste en el Paso 3)
+
+**6.3** ¡Listo! Ya pueden usar el sistema todos
+
+---
+
+### **PASO 7: Crear Accesos Directos**
+
+**Para facilitar el acceso:**
+
+**En cada PC:**
+
+**7.1** Click derecho en el escritorio → Nuevo → Acceso directo
+
+**7.2** Ubicación:
+```
+http://192.168.1.105:8000
+```
+
+**7.3** Nombre: `Sistema Contable`
+
+**7.4** Ahora todos pueden hacer doble click en ese icono para acceder
+
+---
+
+## ⚙️ PARTE 2: AUTOMATIZAR EL SCRIPT
+
+Solo necesitas automatizar en el **PC SERVIDOR**.
+
+### **OPCIÓN A: Programador de Tareas (Si el PC siempre está encendido)**
+
+**1.** En el PC servidor: Win + R → `taskschd.msc` → Enter
+
+**2.** Click derecho en "Biblioteca..." → "Crear tarea básica"
+
+**3.** Configuración:
+
+**General:**
+```
+Nombre: Crear Presupuestos Automáticos
+Descripción: Crea presupuestos el día 1 de cada mes a las 6:00 AM
+□ Ejecutar solo cuando el usuario haya iniciado sesión (DESMARCAR)
+☑ Ejecutar tanto si el usuario inició sesión como si no
+☑ Ejecutar con los privilegios más altos
+```
+
+**4.** Pestaña "Desencadenadores" → Nuevo:
+```
+Iniciar la tarea: Según una programación
+Configuración:
+  ○ Una vez
+  ● Mensualmente
+  Meses: Todos los meses
+  Días: 1
+  Hora: 06:00:00 (o la hora que prefieras)
+☑ Habilitado
+```
+
+**5.** Pestaña "Acciones" → Nueva:
+```
+Acción: Iniciar un programa
+Programa/script: C:\Users\Usuario\AppData\Local\Programs\Python\Python313\python.exe
+Agregar argumentos: crear_presupuestos_automaticos.py
+Iniciar en: C:\Users\Usuario\Desktop\AUTOMATIZACION_IA\Autómata\Automatizacion_Oficina
+Nota: Ajusta la ruta de Python según tu instalación. Para encontrarla:
+bashwhere python
+```
+
+**6.** Pestaña "Condiciones":
+```
+☑ Iniciar la tarea solo si el equipo está conectado a la alimentación de CA
+□ Detener si el equipo deja de... (DESMARCAR)
+☑ Reactivar el equipo para ejecutar esta tarea
+```
+
+**7.** Pestaña "Configuración":
+```
+☑ Permitir que la tarea se ejecute a petición
+☑ Ejecutar la tarea lo antes posible después de perder una ejecución programada
+□ Si la tarea no se ejecuta, reintentar cada: (DESMARCAR si no quieres reintentos)
+8. Aceptar y probar:
+
+Click derecho en la tarea → "Ejecutar"
+Debe crear los presupuestos sin errores
+
+
+OPCIÓN B: Script de Inicio Automático del Servidor
+Para que el servidor Flask inicie automáticamente al encender el PC:
+1. Crea un archivo iniciar_servidor.bat con este contenido:
+batch@echo off
+cd C:\Users\Usuario\Desktop\AUTOMATIZACION_IA\Autómata\Automatizacion_Oficina
+python SISTEMA_CONTABLE/MODULOS/panel_control/app.py
+2. Guárdalo en la carpeta del proyecto
+3. Win + R → shell:startup → Enter
+4. Copia el archivo .bat a esa carpeta
+5. Ahora el servidor iniciará automáticamente al encender el PC

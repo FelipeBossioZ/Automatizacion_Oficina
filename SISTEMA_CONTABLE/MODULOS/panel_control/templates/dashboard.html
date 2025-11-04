@@ -1,52 +1,533 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Control - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 Panel de Control - Sistema de Alertas</title>
     <style>
-        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
-        h1, h2 { color: #333; }
-        a { color: #007BFF; text-decoration: none; }
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; grid-gap: 2em; }
-        .card { background-color: white; padding: 1.5em; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .alertas-list { list-style-type: none; padding: 0; }
-        .alertas-list li { background-color: #fffbe6; border-left: 5px solid #ffc107; margin-bottom: 1em; padding: 1em; }
-        .alertas-list li.overdue { border-left-color: #dc3545; background-color: #f8d7da; }
-        .alertas-list .days-left { font-weight: bold; }
-        .nav { margin-bottom: 2em; background-color: white; padding: 1em; border-radius: 8px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* HEADER CON FECHA */
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+        }
+        
+        .fecha-actual {
+            font-size: 16px;
+            color: #718096;
+            font-weight: 500;
+        }
+        
+        /* NAVEGACIÓN */
+        .nav {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .nav a:hover, .nav a.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* ALERTAS CRÍTICAS - IMPOSIBLES DE IGNORAR */
+        .alertas-criticas {
+            background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(252, 70, 107, 0.4);
+            animation: pulso 2s infinite;
+        }
+        
+        @keyframes pulso {
+            0%, 100% { box-shadow: 0 10px 40px rgba(252, 70, 107, 0.4); }
+            50% { box-shadow: 0 10px 60px rgba(252, 70, 107, 0.8); }
+        }
+        
+        .alertas-criticas h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        /* SECCIONES DE ALERTAS */
+        .alertas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .alerta-seccion {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .alerta-seccion h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .seccion-vencidos h3 { color: #e53e3e; border-color: #e53e3e; }
+        .seccion-hoy h3 { color: #dd6b20; border-color: #dd6b20; }
+        .seccion-criticos h3 { color: #d69e2e; border-color: #d69e2e; }
+        .seccion-descuentos h3 { color: #38b2ac; border-color: #38b2ac; }
+        
+        /* TARJETAS DE ALERTAS */
+        .alerta-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #cbd5e0;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .alerta-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .alerta-vencido { 
+            border-left-color: #e53e3e; 
+            background: #fff5f5;
+        }
+        
+        .alerta-hoy { 
+            border-left-color: #dd6b20; 
+            background: #fffaf0;
+        }
+        
+        .alerta-critico { 
+            border-left-color: #d69e2e; 
+            background: #fffff0;
+        }
+        
+        .alerta-descuento {
+            border-left-color: #38b2ac;
+            background: #e6fffa;
+        }
+        
+        .alerta-descripcion {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .alerta-detalles {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .alerta-monto {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-vencido { background: #feb2b2; color: #742a2a; }
+        .badge-hoy { background: #fbd38d; color: #744210; }
+        .badge-critico { background: #faf089; color: #5f370e; }
+        .badge-categoria { background: #e2e8f0; color: #2d3748; }
+        .badge-etiqueta { background: #bee3f8; color: #2c5282; }
+        
+        .descuento-perdido {
+            color: #e53e3e;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* BOTÓN DE MARCAR COMO PAGADO */
+        .btn-pagar {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-pagar:hover {
+            background: #38a169;
+            transform: scale(1.05);
+        }
+        
+        /* ESTADÍSTICAS DEL MES */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-valor {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        /* MENSAJE VACÍO */
+        .mensaje-vacio {
+            text-align: center;
+            padding: 40px;
+            color: #a0aec0;
+            font-style: italic;
+        }
+        
+        /* ACTUALIZACIÓN AUTOMÁTICA */
+        .auto-refresh {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        .refresh-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #48bb78;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: parpadeo 1s infinite;
+        }
+        
+        @keyframes parpadeo {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
-    <h1>Panel de Control Unificado</h1>
-
-    <div class="nav">
-        <a href="{{ url_for('dashboard') }}"><strong>Dashboard de Alertas</strong></a> |
-        <a href="{{ url_for('gestion_gastos') }}">Gestión de Gastos</a>
-    </div>
-
-    <div class="dashboard-grid">
-        <div class="card">
-            <h2>⚠️ Alertas de Pagos Pendientes</h2>
-            {% if alertas %}
-                <ul class="alertas-list">
-                    {% for alerta in alertas %}
-                        <li class="{{ 'overdue' if alerta.dias_restantes < 0 }}">
-                            <strong>{{ alerta.descripcion }}</strong> - Vence en <span class="days-left">{{ alerta.dias_restantes }} días</span>
-                            <br>
-                            Monto: ${{ "{:,.2f}".format(alerta.monto) }} | Categoría: {{ alerta.categoria }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>¡Todo en orden! No hay pagos urgentes pendientes.</p>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🚨 Centro de Alertas y Control</h1>
+            <div class="fecha-actual">📅 {{ fecha_actual }}</div>
+        </div>
+        
+        <!-- NAVEGACIÓN -->
+        <div class="nav">
+            <a href="/" class="active">🏠 Dashboard</a>
+            <a href="/gastos">💰 Gestión de Gastos</a>
+            <a href="/presupuestos">📊 Presupuestos</a>
+            <a href="/tareas">📋 Tareas</a>
+        </div>
+        
+        <!-- ALERTAS CRÍTICAS DESTACADAS -->
+        {% if alertas.vencidos or alertas.hoy or tareas_urgentes %}
+        <div class="alertas-criticas">
+            <h2>⚠️ ¡ATENCIÓN INMEDIATA REQUERIDA!</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: center;">
+                {% if alertas.vencidos %}
+                <div>
+                    <div style="font-size: 48px; font-weight: bold;">{{ alertas.vencidos|length }}</div>
+                    <div>PAGOS VENCIDOS</div>
+                </div>
+                {% endif %}
+                {% if alertas.hoy %}
+                <div>
+                    <div style="font-size: 48px; font-weight: bold;">{{ alertas.hoy|length }}</div>
+                    <div>VENCEN HOY</div>
+                </div>
+                {% endif %}
+                {% if alertas.descuentos_por_vencer %}
+                <div>
+                    <div style="font-size: 48px; font-weight: bold;">{{ alertas.descuentos_por_vencer|length }}</div>
+                    <div>DESCUENTOS POR VENCER</div>
+                </div>
+                {% endif %}
+                {% if tareas_urgentes %}
+                <div style="{% if tareas_urgentes|selectattr('prioridad', 'equalto', 'Alta')|list %}background: rgba(229, 62, 62, 0.2); border-radius: 10px; padding: 10px;{% endif %}">
+                    <div style="font-size: 48px; font-weight: bold;">{{ tareas_urgentes|length }}</div>
+                    <div>TAREAS URGENTES</div>
+                    {% set tareas_alta = tareas_urgentes|selectattr('prioridad', 'equalto', 'Alta')|list %}
+                    {% if tareas_alta %}
+                    <div style="font-size: 12px; margin-top: 5px; font-weight: bold; color: #e53e3e;">
+                        {{ tareas_alta|length }} PRIORIDAD ALTA
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- ESTADÍSTICAS DEL MES -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Pendiente Este Mes</div>
+                <div class="stat-valor" style="color: #e53e3e;">${{ "{:,.0f}".format(total_pendiente_mes) }}</div>
+            </div>
+            
+            {% for stat in stats %}
+            <div class="stat-card">
+                <div class="stat-label">{{ stat.etiqueta }}</div>
+                <div class="stat-valor">${{ "{:,.0f}".format(stat.pendiente) }}</div>
+                <div style="font-size: 12px; color: #718096;">
+                    {{ stat.cantidad }} gastos | Pagado: ${{ "{:,.0f}".format(stat.pagado) }}
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if tareas_urgentes %}
+            <div class="stat-card" style="border-left: 4px solid #805ad5;">
+                <div class="stat-label">Tareas Próximos 7 Días</div>
+                <div class="stat-valor" style="color: #805ad5;">{{ tareas_urgentes|length }}</div>
+                <div style="font-size: 12px; color: #718096;">
+                    {% set tareas_alta = tareas_urgentes|selectattr('prioridad', 'equalto', 'Alta')|list %}
+                    {% if tareas_alta %}
+                    <span style="color: #e53e3e; font-weight: bold;">{{ tareas_alta|length }} Alta prioridad</span>
+                    {% else %}
+                    <span>Sin tareas de alta prioridad</span>
+                    {% endif %}
+                </div>
+            </div>
             {% endif %}
         </div>
-        <div class="card">
-            <h2>🚀 Atajos</h2>
-            <p><a href="{{ url_for('gestion_gastos') }}">Ir a la gestión completa de gastos &rarr;</a></p>
-            <!-- Aquí añadiremos más atajos en el futuro -->
+        
+        <!-- GRID DE ALERTAS POR CATEGORÍA -->
+        <div class="alertas-grid">
+            <!-- VENCIDOS -->
+            {% if alertas.vencidos %}
+            <div class="alerta-seccion seccion-vencidos">
+                <h3>🔴 VENCIDOS ({{ alertas.vencidos|length }})</h3>
+                {% for alerta in alertas.vencidos %}
+                <div class="alerta-item alerta-vencido">
+                    <div class="alerta-descripcion">{{ alerta.descripcion }}</div>
+                    <div class="alerta-detalles">
+                        <span class="alerta-monto">${{ "{:,.0f}".format(alerta.monto) }}</span>
+                        <span class="badge badge-vencido">{{ alerta.dias_restantes|abs }} días atrasado</span>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span class="badge badge-categoria">{{ alerta.categoria }}</span>
+                        <span class="badge badge-etiqueta">{{ alerta.etiqueta }}</span>
+                    </div>
+                    {% if alerta.descuento_perdido > 0 %}
+                    <div class="descuento-perdido">
+                        ❌ Descuento perdido: ${{ "{:,.0f}".format(alerta.descuento_perdido) }}
+                    </div>
+                    {% endif %}
+                    <form method="POST" action="/gasto/pagar/{{ alerta.id }}" style="display: inline;">
+                        <input type="hidden" name="usuario" value="Usuario Dashboard">
+                        <button type="submit" class="btn-pagar">✅ Marcar como Pagado</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- VENCEN HOY -->
+            {% if alertas.hoy %}
+            <div class="alerta-seccion seccion-hoy">
+                <h3>🟠 VENCEN HOY ({{ alertas.hoy|length }})</h3>
+                {% for alerta in alertas.hoy %}
+                <div class="alerta-item alerta-hoy">
+                    <div class="alerta-descripcion">{{ alerta.descripcion }}</div>
+                    <div class="alerta-detalles">
+                        <span class="alerta-monto">${{ "{:,.0f}".format(alerta.monto) }}</span>
+                        <span class="badge badge-hoy">¡ÚLTIMO DÍA!</span>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span class="badge badge-categoria">{{ alerta.categoria }}</span>
+                        <span class="badge badge-etiqueta">{{ alerta.etiqueta }}</span>
+                    </div>
+                    <form method="POST" action="/gasto/pagar/{{ alerta.id }}" style="display: inline;">
+                        <input type="hidden" name="usuario" value="Usuario Dashboard">
+                        <button type="submit" class="btn-pagar">✅ Marcar como Pagado</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- DESCUENTOS POR VENCER -->
+            {% if alertas.descuentos_por_vencer %}
+            <div class="alerta-seccion seccion-descuentos">
+                <h3>💰 DESCUENTOS POR VENCER ({{ alertas.descuentos_por_vencer|length }})</h3>
+                {% for alerta in alertas.descuentos_por_vencer %}
+                <div class="alerta-item alerta-descuento">
+                    <div class="alerta-descripcion">{{ alerta.descripcion }}</div>
+                    <div class="alerta-detalles">
+                        <span class="alerta-monto">${{ "{:,.0f}".format(alerta.monto) }}</span>
+                        <span class="badge badge-critico">Ahorra ${{ "{:,.0f}".format(alerta.monto_ahorro) }}</span>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span class="badge badge-categoria">{{ alerta.categoria }}</span>
+                        <div style="color: #38b2ac; font-weight: bold; margin-top: 5px;">
+                            ⏰ Descuento válido por {{ alerta.dias_restantes_descuento }} día(s)
+                        </div>
+                    </div>
+                    <form method="POST" action="/gasto/pagar/{{ alerta.id }}" style="display: inline;">
+                        <input type="hidden" name="usuario" value="Usuario Dashboard">
+                        <button type="submit" class="btn-pagar">✅ Pagar y Aprovechar Descuento</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- PRÓXIMOS 3 DÍAS -->
+            {% if alertas.criticos %}
+            <div class="alerta-seccion seccion-criticos">
+                <h3>🟡 PRÓXIMOS 3 DÍAS ({{ alertas.criticos|length }})</h3>
+                {% for alerta in alertas.criticos %}
+                <div class="alerta-item alerta-critico">
+                    <div class="alerta-descripcion">{{ alerta.descripcion }}</div>
+                    <div class="alerta-detalles">
+                        <span class="alerta-monto">${{ "{:,.0f}".format(alerta.monto) }}</span>
+                        <span class="badge badge-critico">{{ alerta.dias_restantes }} día(s)</span>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span class="badge badge-categoria">{{ alerta.categoria }}</span>
+                        <span class="badge badge-etiqueta">{{ alerta.etiqueta }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- TAREAS URGENTES -->
+        {% if tareas_urgentes %}
+        <div class="alertas-grid">
+            <div class="alerta-seccion" style="grid-column: 1 / -1;">
+                <h3 style="color: #805ad5; border-color: #805ad5;">📋 TAREAS URGENTES ({{ tareas_urgentes|length }})</h3>
+                {% for tarea in tareas_urgentes %}
+                <div class="alerta-item {% if tarea.prioridad == 'Alta' %}alerta-vencido{% elif tarea.prioridad == 'Media' %}alerta-hoy{% else %}alerta-critico{% endif %}">
+                    <div class="alerta-descripcion">
+                        {% if tarea.prioridad == 'Alta' %}🔴{% elif tarea.prioridad == 'Media' %}🟠{% else %}🟢{% endif %}
+                        {{ tarea.descripcion }}
+                    </div>
+                    <div class="alerta-detalles">
+                        <div>
+                            <span class="badge badge-categoria">{{ tarea.categoria }}</span>
+                            {% if tarea.prioridad == 'Alta' %}
+                            <span class="badge badge-vencido">PRIORIDAD ALTA</span>
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 14px; color: #718096;">
+                            📅 Vence: {{ tarea.fecha_vencimiento }}
+                        </div>
+                    </div>
+                    {% if tarea.cliente_relacionado %}
+                    <div style="margin-top: 8px; font-size: 14px; color: #718096;">
+                        👤 Cliente: <strong>{{ tarea.cliente_relacionado }}</strong>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- MENSAJE SI NO HAY ALERTAS CRÍTICAS -->
+        {% if not (alertas.vencidos or alertas.hoy or alertas.criticos or alertas.descuentos_por_vencer or tareas_urgentes) %}
+        <div class="alerta-seccion">
+            <div class="mensaje-vacio">
+                <h2 style="color: #48bb78; font-size: 48px;">✅</h2>
+                <h3 style="color: #2d3748; margin: 20px 0;">¡Todo en orden!</h3>
+                <p>No hay pagos urgentes ni tareas pendientes en este momento.</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- INDICADOR DE ACTUALIZACIÓN AUTOMÁTICA -->
+        <div class="auto-refresh">
+            <span class="refresh-indicator"></span>
+            Actualizado hace unos segundos
         </div>
     </div>
+    
+    <script>
+        // Actualización automática cada 30 segundos
+        setTimeout(function() {
+            location.reload();
+        }, 30000);
+        
+        // Sonido de alerta si hay vencidos o hoy (opcional)
+        // Descomenta las siguientes líneas si quieres agregar sonido de alerta:
+        // if ({{ 1 if alertas.vencidos or alertas.hoy else 0 }}) {
+        //     const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTcIGWi77eeeUhALUKnn7+FhGQU7k9vzxnMpBSl+zPHeikMKFGGz6PGpWBULRqPj9L5xIwUtg9Hy+4s4CBpquu7pkUwPDFKo6fCxayIFPpPX8s13KwUrd8rx4Ys+ChVhs+jxqVgVAw==');
+        //     audio.play().catch(e => console.log('Audio no disponible'));
+        // }
+    </script>
 </body>
 </html>
